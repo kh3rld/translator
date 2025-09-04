@@ -479,7 +479,7 @@ class _TranslatorPageState extends State<TranslatorPage>
               child: const Icon(Icons.translate, color: Colors.white, size: 26),
             ),
             const SizedBox(width: 15),
-            Text(
+            const Text(
               'Translate',
               style: TextStyle(
                 fontSize: 20,
@@ -958,24 +958,24 @@ class _TranslatorPageState extends State<TranslatorPage>
               const Text('About Translator'),
             ],
           ),
-          content: Column(
+          content: const Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('Version: ${AppConstants.appVersion}'),
-              const SizedBox(height: 10),
-              const Text(
+              SizedBox(height: 10),
+              Text(
                 'This app uses the free MyMemory Translation API to provide accurate translations in 40+ different languages.',
               ),
-              const SizedBox(height: 10),
-              const Text('Features include:'),
-              const Text('• Auto language detection'),
-              const Text('• Copy, listen, and share translations'),
-              const Text('• Modern, intuitive interface'),
-              const SizedBox(height: 15),
-              const Text('Developed by Khalid Husein'),
-              const SizedBox(height: 5),
-              const Text("Email: kherld.hussein@gmail.com"),
+              SizedBox(height: 10),
+              Text('Features include:'),
+              Text('• Auto language detection'),
+              Text('• Copy, listen, and share translations'),
+              Text('• Modern, intuitive interface'),
+              SizedBox(height: 15),
+              Text('Developed by Khalid Husein'),
+              SizedBox(height: 5),
+              Text("Email: kherld.hussein@gmail.com"),
             ],
           ),
           actions: [
@@ -1009,6 +1009,6 @@ class _TranslatorPageState extends State<TranslatorPage>
       _targetLang = temp;
     });
 
-    context.read<TranslationBloc>().add(SwapLanguages());
+    context.read<TranslationBloc>().add(const SwapLanguages());
   }
 }
