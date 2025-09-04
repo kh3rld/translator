@@ -50,8 +50,8 @@ class _TranslatorPageState extends State<TranslatorPage>
 
     _slideAnimation =
         Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero).animate(
-          CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
-        );
+      CurvedAnimation(parent: _slideController, curve: Curves.easeOutCubic),
+    );
 
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
@@ -117,25 +117,15 @@ class _TranslatorPageState extends State<TranslatorPage>
                             },
                             onSwap: _swapLanguages,
                           ),
-
                           const SizedBox(height: 30),
-
                           SourceTextInput(controller: _sourceTextController),
-
                           const SizedBox(height: 25),
-
                           _buildTranslateButton(),
-
                           const SizedBox(height: 25),
-
                           _buildResultArea(),
-
                           const SizedBox(height: 20),
-
                           _buildFeaturesSection(),
-
                           const SizedBox(height: 20),
-
                           _buildQuickActions(),
                         ],
                       ),
@@ -882,12 +872,12 @@ class _TranslatorPageState extends State<TranslatorPage>
                 onTap: () {
                   _sourceTextController.clear();
                   context.read<TranslationBloc>().add(
-                    const TranslateText(
-                      text: '',
-                      sourceLang: 'auto',
-                      targetLang: 'EN',
-                    ),
-                  );
+                        const TranslateText(
+                          text: '',
+                          sourceLang: 'auto',
+                          targetLang: 'EN',
+                        ),
+                      );
                 },
                 color: Colors.grey.shade600,
               ),
@@ -993,12 +983,12 @@ class _TranslatorPageState extends State<TranslatorPage>
     final text = _sourceTextController.text.trim();
     if (text.isNotEmpty) {
       context.read<TranslationBloc>().add(
-        TranslateText(
-          text: text,
-          sourceLang: _sourceLang,
-          targetLang: _targetLang,
-        ),
-      );
+            TranslateText(
+              text: text,
+              sourceLang: _sourceLang,
+              targetLang: _targetLang,
+            ),
+          );
     }
   }
 
