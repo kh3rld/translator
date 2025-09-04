@@ -9,11 +9,11 @@ class ClipboardService {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Row(
+            content: const Row(
               children: [
-                const Icon(Icons.check_circle, color: Colors.white),
-                const SizedBox(width: 8),
-                const Text('Text copied to clipboard'),
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Text copied to clipboard'),
               ],
             ),
             backgroundColor: Colors.green.shade600,
@@ -29,11 +29,11 @@ class ClipboardService {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Row(
+            content: const Row(
               children: [
-                const Icon(Icons.error, color: Colors.white),
-                const SizedBox(width: 8),
-                const Text('Failed to copy text'),
+                Icon(Icons.error, color: Colors.white),
+                SizedBox(width: 8),
+                Text('Failed to copy text'),
               ],
             ),
             backgroundColor: Colors.red.shade600,
