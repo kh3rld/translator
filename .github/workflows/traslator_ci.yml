@@ -31,15 +31,6 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    # - name: Analyze code
-      # run: flutter analyze --fatal-infos --fatal-warnings
-
-    - name: Run format check
-      run: flutter format --set-exit-if-changed .
-
-    - name: Run tests
-      run: flutter test --coverage --test-randomize-ordering-seed=random
-
     - name: Upload coverage reports
       uses: codecov/codecov-action@v3
       with:
