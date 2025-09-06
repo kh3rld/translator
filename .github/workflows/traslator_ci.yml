@@ -59,8 +59,8 @@ jobs:
 
       - name: Generate build version
         run: |
-          TIMESTAMP=$(date +%Y%m%d%H%M)
-          echo "BUILD_VERSION=$TIMESTAMP" >> $GITHUB_ENV
+          # Use workflow run number as build version (guaranteed to be within Android limits)
+          echo "BUILD_VERSION=${{ github.run_number }}" >> $GITHUB_ENV
           echo "BUILD_NAME=1.0.0" >> $GITHUB_ENV
 
       - name: Build APK
