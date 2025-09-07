@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/services/clipboard_service.dart';
-import '../../core/services/text_to_speech_service.dart';
+import '../../core/services/enhanced_tts_service.dart';
 import '../../core/services/share_service.dart';
 import '../bloc/translation_bloc.dart';
 import '../widgets/language_dropdown.dart';
 import '../widgets/language_selection_row.dart';
 import '../widgets/source_text_input.dart';
+import 'model_management_page.dart';
+import 'language_learning_page.dart';
 
 class TranslatorPage extends StatefulWidget {
   const TranslatorPage({super.key});
@@ -120,6 +122,8 @@ class _TranslatorPageState extends State<TranslatorPage>
                           const SizedBox(height: 30),
                           SourceTextInput(controller: _sourceTextController),
                           const SizedBox(height: 25),
+                          _buildOfflineStatusMessage(),
+                          const SizedBox(height: 15),
                           _buildTranslateButton(),
                           const SizedBox(height: 25),
                           _buildResultArea(),
@@ -197,6 +201,30 @@ class _TranslatorPageState extends State<TranslatorPage>
               ],
             ),
           ),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ModelManagementPage(),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.download, color: Colors.grey.shade600),
+                tooltip: 'Manage Offline Models',
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LanguageLearningPage(),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.school, color: Colors.grey.shade600),
+                tooltip: 'Language Learning',
+              ),
           IconButton(
             onPressed: () {
               _showInfoDialog(context);
@@ -225,20 +253,20 @@ class _TranslatorPageState extends State<TranslatorPage>
           ),
         ],
       ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
                 child: _buildLanguageCard(
                   title: 'From',
                   language: _sourceLang,
-                  onChanged: (value) {
-                    setState(() {
-                      _sourceLang = value!;
-                    });
-                  },
-                  isSource: true,
+                    onChanged: (value) {
+                      setState(() {
+                        _sourceLang = value!;
+                      });
+                    },
+                    isSource: true,
                   icon: Icons.input,
                   color: Colors.blue.shade100,
                   gradient: [Colors.blue.shade50, Colors.blue.shade100],
@@ -272,16 +300,16 @@ class _TranslatorPageState extends State<TranslatorPage>
                 ),
               ),
               const SizedBox(width: 15),
-              Expanded(
+                Expanded(
                 child: _buildLanguageCard(
                   title: 'To',
                   language: _targetLang,
-                  onChanged: (value) {
-                    setState(() {
-                      _targetLang = value!;
-                    });
-                  },
-                  isSource: false,
+                    onChanged: (value) {
+                      setState(() {
+                        _targetLang = value!;
+                      });
+                    },
+                    isSource: false,
                   icon: Icons.output,
                   color: Colors.purple.shade100,
                   gradient: [Colors.purple.shade50, Colors.purple.shade100],
@@ -428,6 +456,64 @@ class _TranslatorPageState extends State<TranslatorPage>
     );
   }
 
+  Widget _buildOfflineStatusMessage() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.blue.shade200, width: 1),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.cloud_download, color: Colors.blue.shade600, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Offline Translation Ready',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.blue.shade800,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Download language models for instant, private translations',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.blue.shade600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ModelManagementPage(),
+                ),
+              );
+            },
+            child: Text(
+              'Download',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.blue.shade700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildTranslateButton() {
     return Container(
       width: double.infinity,
@@ -453,8 +539,8 @@ class _TranslatorPageState extends State<TranslatorPage>
         ],
       ),
       child: ElevatedButton(
-        onPressed: _translateText,
-        style: ElevatedButton.styleFrom(
+              onPressed: _translateText,
+              style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
@@ -485,8 +571,8 @@ class _TranslatorPageState extends State<TranslatorPage>
 
   Widget _buildResultArea() {
     return BlocBuilder<TranslationBloc, TranslationState>(
-      builder: (context, state) {
-        if (state is TranslationLoading) {
+              builder: (context, state) {
+                if (state is TranslationLoading) {
           return Container(
             padding: const EdgeInsets.all(40),
             decoration: BoxDecoration(
@@ -531,7 +617,7 @@ class _TranslatorPageState extends State<TranslatorPage>
               ],
             ),
           );
-        } else if (state is TranslationSuccess) {
+                } else if (state is TranslationSuccess) {
           return Container(
             width: double.infinity,
             padding: const EdgeInsets.all(25),
@@ -612,18 +698,11 @@ class _TranslatorPageState extends State<TranslatorPage>
                       },
                       color: Colors.blue.shade600,
                     ),
-                    _buildActionButton(
-                      icon: Icons.volume_up,
-                      label: 'Listen',
-                      onTap: () {
-                        TextToSpeechService.speak(
-                          state.translatedText,
-                          state.targetLang.isNotEmpty
-                              ? state.targetLang
-                              : _targetLang,
-                        );
-                      },
-                      color: Colors.green.shade600,
+                    _buildEnhancedTTSButton(
+                      translatedText: state.translatedText,
+                      targetLang: state.targetLang.isNotEmpty
+                          ? state.targetLang
+                          : _targetLang,
                     ),
                     _buildActionButton(
                       icon: Icons.share,
@@ -643,7 +722,7 @@ class _TranslatorPageState extends State<TranslatorPage>
               ],
             ),
           );
-        } else if (state is TranslationError) {
+                } else if (state is TranslationError) {
           return Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -675,9 +754,114 @@ class _TranslatorPageState extends State<TranslatorPage>
               ],
             ),
           );
+                }
+                return const SizedBox();
+              },
+    );
+  }
+
+  Widget _buildEnhancedTTSButton({
+    required String translatedText,
+    required String targetLang,
+  }) {
+    return PopupMenuButton<String>(
+      icon: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.green.shade600,
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: const Icon(Icons.volume_up, color: Colors.white, size: 20),
+      ),
+      tooltip: 'Listen with enhanced options',
+      onSelected: (option) {
+        switch (option) {
+          case 'normal':
+            EnhancedTTSService.speakText(
+              text: translatedText,
+              languageCode: targetLang,
+            );
+            break;
+          case 'slow':
+            EnhancedTTSService.speakSlowly(
+              text: translatedText,
+              languageCode: targetLang,
+            );
+            break;
+          case 'emphasis':
+            EnhancedTTSService.speakWithEmphasis(
+              text: translatedText,
+              languageCode: targetLang,
+            );
+            break;
+          case 'happy':
+            EnhancedTTSService.speakWithEmotion(
+              text: translatedText,
+              languageCode: targetLang,
+              emotion: 'happy',
+            );
+            break;
+          case 'calm':
+            EnhancedTTSService.speakWithEmotion(
+              text: translatedText,
+              languageCode: targetLang,
+              emotion: 'calm',
+            );
+            break;
         }
-        return const SizedBox();
       },
+      itemBuilder: (context) => [
+        const PopupMenuItem(
+          value: 'normal',
+          child: Row(
+            children: [
+              Icon(Icons.volume_up, color: Colors.green),
+              SizedBox(width: 8),
+              Text('Normal Speed'),
+            ],
+          ),
+        ),
+        const PopupMenuItem(
+          value: 'slow',
+          child: Row(
+            children: [
+              Icon(Icons.slow_motion_video, color: Colors.blue),
+              SizedBox(width: 8),
+              Text('Slow (Learning)'),
+            ],
+          ),
+        ),
+        const PopupMenuItem(
+          value: 'emphasis',
+          child: Row(
+            children: [
+              Icon(Icons.format_bold, color: Colors.orange),
+              SizedBox(width: 8),
+              Text('Word by Word'),
+            ],
+          ),
+        ),
+        const PopupMenuItem(
+          value: 'happy',
+          child: Row(
+            children: [
+              Icon(Icons.mood, color: Colors.yellow),
+              SizedBox(width: 8),
+              Text('Happy Tone'),
+            ],
+          ),
+        ),
+        const PopupMenuItem(
+          value: 'calm',
+          child: Row(
+            children: [
+              Icon(Icons.spa, color: Colors.teal),
+              SizedBox(width: 8),
+              Text('Calm Tone'),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -983,12 +1167,12 @@ class _TranslatorPageState extends State<TranslatorPage>
     final text = _sourceTextController.text.trim();
     if (text.isNotEmpty) {
       context.read<TranslationBloc>().add(
-            TranslateText(
-              text: text,
-              sourceLang: _sourceLang,
-              targetLang: _targetLang,
-            ),
-          );
+        TranslateText(
+          text: text,
+          sourceLang: _sourceLang,
+          targetLang: _targetLang,
+        ),
+      );
     }
   }
 
