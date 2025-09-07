@@ -1,42 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
 import 'core/constants/app_constants.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'data/datasources/translation_local_data_source.dart';
 import 'data/datasources/translation_remote_data_source.dart';
+import 'data/datasources/translation_hybrid_data_source.dart';
+import 'core/services/local_translation_service.dart';
 import 'domain/repositories/translation_repository.dart';
 import 'domain/repositories/translation_repository_impl.dart';
 import 'domain/usecases/translate_text_usecase.dart';
 import 'presentation/bloc/translation_bloc.dart';
 import 'presentation/pages/translator_page.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 final getIt = GetIt.instance;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await dotenv.load(fileName: '.env');
-  } catch (e) {
-    debugPrint(
-      'Warning: .env file not found. Using default configuration. Error: $e',
-    );
-  }
-  setupDependencies();
+  await setupDependencies();
   runApp(const TranslatorApp());
 }
 
-void setupDependencies() {
-  getIt.registerSingleton<Dio>(Dio());
+Future<void> setupDependencies() async {
+  final localTranslationService = LocalTranslationService();
+  await localTranslationService.initialize();
+  getIt.registerSingleton<LocalTranslationService>(localTranslationService);
+
+  getIt.registerSingleton<TranslationLocalDataSource>(
+    TranslationLocalDataSource(
+      localTranslationService: getIt<LocalTranslationService>(),
+    ),
+  );
 
   getIt.registerSingleton<TranslationRemoteDataSource>(
-    TranslationRemoteDataSource(dio: getIt<Dio>()),
+      TranslationRemoteDataSource());
+
+  getIt.registerSingleton<TranslationHybridDataSource>(
+    TranslationHybridDataSource(
+      localDataSource: getIt<TranslationLocalDataSource>(),
+      remoteDataSource: getIt<TranslationRemoteDataSource>(),
+      connectivity: Connectivity(),
+    ),
   );
 
   getIt.registerSingleton<TranslationRepository>(
     TranslationRepositoryImpl(
-      remoteDataSource: getIt<TranslationRemoteDataSource>(),
+      dataSource: getIt<TranslationHybridDataSource>(),
     ),
   );
 
