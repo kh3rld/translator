@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'translation_repository.dart';
-import '../../data/datasources/translation_remote_data_source.dart';
+import '../../data/datasources/translation_hybrid_data_source.dart';
 
 class TranslationRepositoryImpl implements TranslationRepository {
-  final TranslationRemoteDataSource remoteDataSource;
+  final TranslationHybridDataSource dataSource;
 
-  TranslationRepositoryImpl({required this.remoteDataSource});
+  TranslationRepositoryImpl({required this.dataSource});
 
   @override
   Future<String> translateText({
@@ -16,7 +16,7 @@ class TranslationRepositoryImpl implements TranslationRepository {
     required String sourceLang,
     required String targetLang,
   }) async {
-    return await remoteDataSource.translateText(
+    return await dataSource.translateText(
       text: text,
       sourceLang: sourceLang,
       targetLang: targetLang,
@@ -25,7 +25,7 @@ class TranslationRepositoryImpl implements TranslationRepository {
 
   @override
   Future<List<String>> getSupportedLanguages() async {
-    return await remoteDataSource.getSupportedLanguages();
+    return await dataSource.getSupportedLanguages();
   }
 
   @override
