@@ -65,17 +65,11 @@ jobs:
 
       - name: Build APK
         run: |
-          flutter build apk --release \
-            --build-name=$BUILD_NAME \
-            --build-number=$BUILD_VERSION \
-            --dart-define=APP_ENV=production
+          flutter build apk --release 
 
       - name: Build AAB
         run: |
-          flutter build appbundle --release \
-            --build-name=$BUILD_NAME \
-            --build-number=$BUILD_VERSION \
-            --dart-define=APP_ENV=production
+          flutter build appbundle --release
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
